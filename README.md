@@ -1,7 +1,7 @@
 # ChIP-seq Analysis
 ChIPseq (pipelines in genomics for Chromatin Immunoprecipitation Sequencing) is an analysis pipeline for preprocessing, alignment and peak calling for ChIP sequencing experiments.The inputs are reads files from the sequencing experiment, and a configuration and meta data file that describes the experiment. 
 
-# Work-flow of the analysis:
+<h1>Work-flow of the analysis<h1/>:
 -Quality reads using fastqc<br/>
 -Trimming of the read using cutadapt tools<br/>
 -Mapping the reads to the genome using bowtie2<br/>
