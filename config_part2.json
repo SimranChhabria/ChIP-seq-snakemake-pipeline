@@ -1,0 +1,14 @@
+{
+  "Sorted_samples":"/projects/academic/gbcstaff/Intern_Projects/simranc/ChIPseq/outputs/samtools",
+  "meta_file2": "meta_part2.txt",
+  "file_names":
+   {
+    "mkdir_done": "mkdir.done"
+   },
+   "dir_names":
+   {
+     "peakcall_dir":"outputs/peakcalling"
+   },
+   
+   
+}
