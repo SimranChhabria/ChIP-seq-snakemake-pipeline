@@ -1,0 +1,22 @@
+{
+  "ChIP-seq-sample":"/projects/academic/gbcstaff/Intern_Projects/simranc/ChIPseq/chip-seq-samples",
+  "meta_file": "meta_part1.txt",
+  "file_names":
+   {
+    "mkdir_done": "mkdir.done"
+   },
+   "dir_names":
+   {
+     "fastqc_dir":"outputs/fastqc",
+     "trimmed_dir":"outputs/trimmed",
+     "mapped_dir":"outputs/mapping",
+     "samtools_dir":"outputs/samtools"
+   },
+   "params":
+   {
+    "bowtie2":
+        {
+         "bowtie2_reference": "/projects/academic/gbcstaff/Intern_Projects/simranc/miRNAseq/Bowtie_ref/GRCh38_noalt_as"
+        }
+   }
+}
