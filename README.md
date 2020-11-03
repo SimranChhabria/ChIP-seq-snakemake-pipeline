@@ -46,7 +46,7 @@ conda install -c bioconda -c conda-forge snakemake-minimal
 
 # Snakemake Workflow
 
-1. git clone this repository\
+1. git clone this repository
 ```
 git clone https://github.com/SimranChhabria/ChIP-seq-snakemake-pipeline.git
 ```
@@ -56,7 +56,7 @@ git clone https://github.com/SimranChhabria/ChIP-seq-snakemake-pipeline.git
 module load python
 module load MACS2
 ```
-3. Edit config files.
+3. Edit all the config files.
 
 4. Ensure meta-data table contains all of the necessairy fields (TABBED-DELIMITED)
 
