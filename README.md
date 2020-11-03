@@ -14,3 +14,37 @@ ChIPseq (pipelines in genomics for Chromatin Immunoprecipitation Sequencing) is 
 -Sam files<br/>
 -Sorted bam files<br/>
 -narrowPeak/ BroadPeak files<br/>
+
+# Setting up the conda environment:
+Conda is an open source package management system and environment management system that runs on Windows, macOS and Linux. Conda quickly installs, runs and updates packages and their dependencies. Conda easily creates, saves, loads and switches between environments on your local computer.
+
+## Step 1: Install conda:
+
+```
+wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+chmod u+x Miniconda3-latest-Linux-x86_64.sh
+./Miniconda3-latest-Linux-x86_64.sh
+
+```
+
+Update the conda to the latest version:
+
+```
+conda update conda
+```
+
+## Step 2: Create a new conda environment and activate it:
+
+```
+conda create -n ChIP-seq
+conda activate ChIP-seq
+```
+
+## Step 3: Install snakemake
+
+```
+conda install -c bioconda -c conda-forge snakemake-minimal
+```
+
+
+
