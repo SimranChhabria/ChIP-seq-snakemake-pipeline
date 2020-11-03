@@ -15,50 +15,31 @@ ChIPseq (pipelines in genomics for Chromatin Immunoprecipitation Sequencing) is 
 -Sorted bam files<br/>
 -narrowPeak/ BroadPeak files<br/>
 
-# Setting up the conda environment:
-Conda is an open source package management system and environment management system that runs on Windows, macOS and Linux. Conda quickly installs, runs and updates packages and their dependencies. Conda easily creates, saves, loads and switches between environments on your local computer.
-
-## Step 1: Install conda
-
-```
-wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
-chmod u+x Miniconda3-latest-Linux-x86_64.sh
-./Miniconda3-latest-Linux-x86_64.sh
-```
-
-Update the conda to the latest version:
-
-```
-conda update conda
-```
-
-## Step 2: Create a new conda environment and activate it
-
-```
-conda create -n ChIP-seq
-conda activate ChIP-seq
-```
-
-## Step 3: Install snakemake
-```
-conda install -c bioconda -c conda-forge snakemake-minimal
-```
-
 # Snakemake Workflow
 
-1. git clone this repository
+1. Git clone this repository
 ```
 git clone https://github.com/SimranChhabria/ChIP-seq-snakemake-pipeline.git
 ```
 
-2. Load module python and MACS2 after activating the conda environment
+2. Load all the required modules 
 ```
 module load python
 module load MACS2
+module load snakemake 
+module load gbc-bowtie2
+module load gbc-cutadapt
+module load gbc-fastqc
+module load gbc-samtools
 ```
-3. Edit all the config files.
+3. Activate the snakemake environment.
+```
+conda activate snakemake
+```
 
-4. Ensure meta-data table contains all of the necessairy fields (TABBED-DELIMITED)
+4. Edit all the config files.
+
+5. Ensure meta-data table contains all of the necessairy fields (TABBED-DELIMITED)
 
 Example:meta-part1
 
@@ -75,7 +56,7 @@ CAL27_EHF_5A5_S1_R1_001	CAL_Input.bam	CAL27_EHF_5A5_S1_R1_001.bam
 ```
 ** NOTE EXACT HEADERS HAVE TO BE ENFORCED or key errors will be thrown during processing**
 
-5. Launch jobs
+6. Launch jobs
 
 ```
 snakemake --latency-wait 120 -pr -j 16 --use-conda -s Snakemake-part1 --cluster "sbatch --partition gbc --cluster faculty --qos gbc --account gbcstaff --mem=24G"
