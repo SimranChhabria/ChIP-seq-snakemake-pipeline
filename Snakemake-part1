@@ -11,11 +11,7 @@ df.index = sample_ids
 
 def get_sample(sample_id):
       dir = config["ChIP-seq-sample"]
-      return tuple(os.path.join(dir, df.loc[str(sample_id), x]) for x in ('SampleFiles',))
-
-
-
- 
+      return tuple(os.path.join(dir, df.loc[str(sample_id), x]) for x in ('SampleFiles',)) 
 
 rule all:
       input:      
