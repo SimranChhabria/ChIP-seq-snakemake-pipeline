@@ -1,0 +1,55 @@
+#!/usr/bin/python
+import pandas as pd
+import os
+
+configfile: "config_part2.json"
+localrules: all, mkdir
+
+
+df2=pd.read_csv(config["meta_file2"], sep= '\t', header=0, index_col=0)
+sample_names = list(df2.index)
+df2.index = sample_names
+
+def get_sorted_sample(sample_name):
+     dir = config["Sorted_samples"]
+     return tuple(os.path.join(dir, df2.loc[str(sample_name), x]) for x in ('InputFile', 'SampleFiles'))
+def get_range(sample_name):
+     return df2.loc[sample_name]["Range"] 
+
+
+rule all:
+     input:
+        expand("{dir}/{sample_name}_model.r", dir=config["dir_names"]["peakcall_dir"], sample_name=sample_names)
+ 
+  
+rule mkdir:
+     output: touch(config["file_names"]["mkdir_done"])
+     params: dirs = list(config["dir_names"].values())
+     shell: "mkdir -p {params.dirs}"
+
+
+rule peak_calling:
+     input:
+        rules.mkdir.output,
+        control =lambda wildcards:get_sorted_sample(wildcards.sample_name)[0],
+        chip =lambda wildcards:get_sorted_sample(wildcards.sample_name)[1]
+     params: 
+        condition=lambda wildcards: get_range(wildcards.sample_name),
+        pvalue= "0.001"
+     output:
+        peaks = config["dir_names"]["peakcall_dir"]+"/{sample_name}_model.r"
+     log: "log/{sample_name}.macs2"
+     
+     run:
+       if params.condition  == '--broad':
+            shell("macs2 callpeak -t {input.chip} -c {input.control} -f BAM -n {wildcards.sample_name} {params.condition} -p {params.pvalue} --outdir outputs/peakcalling  2> {log}")
+            print("Broad peaks")
+       else:
+            shell("macs2 callpeak -t {input.chip} -c {input.control} -f BAM -n {wildcards.sample_name}  -p {params.pvalue} --outdir outputs/peakcalling  2> {log}")
+            print("Narrow Peaks")
+ 
+ 
+        
+         
+        
+                    
