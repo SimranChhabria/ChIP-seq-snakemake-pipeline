@@ -1,0 +1,91 @@
+#!/usr/bin/python
+import pandas as pd
+import os
+
+configfile: "config_part1.json"
+localrules: all, mkdir
+ 
+df=pd.read_csv(config["meta_file"], sep= '\t', header=0, index_col=0)
+sample_ids = list(df.index)
+df.index = sample_ids
+
+def get_sample(sample_id):
+      dir = config["ChIP-seq-sample"]
+      return tuple(os.path.join(dir, df.loc[str(sample_id), x]) for x in ('SampleFiles',))
+
+
+
+ 
+
+rule all:
+      input:      
+        expand("{dir}/{sample_id}_fastqc.html", dir=config["dir_names"]["fastqc_dir"], sample_id=sample_ids),  
+        expand("{dir}/{sample_id}.bam.bai", dir=config["dir_names"]["samtools_dir"], sample_id=sample_ids)
+      shell:
+         'snakemake --latency-wait 120 -pr -j 16  -s Snakemake-part2 --cluster "sbatch --partition gbc --cluster faculty --qos gbc --account gbcstaff --mem=24G"'              
+
+rule mkdir:
+     output: touch(config["file_names"]["mkdir_done"])
+     params: dirs = list(config["dir_names"].values())
+     shell: "mkdir -p {params.dirs}"          
+
+
+rule fastq:
+     input:
+       rules.mkdir.output,
+       read=lambda wildcards:get_sample(wildcards.sample_id)
+     output:
+      fast_read= config["dir_names"]["fastqc_dir"] + "/{sample_id}_fastqc.html"
+     conda:"envs/fastqc.yaml" 
+     shell:
+       "fastqc --threads 12  {input.read} -o outputs/fastqc " 
+
+rule trimmed:
+     input:
+       rules.mkdir.output,     
+       read=lambda wildcards:get_sample(wildcards.sample_id)
+     output:
+       file1 = config["dir_names"]["trimmed_dir"] + "/{sample_id}.trim.fastq"
+     params:
+       adapter= "-a AATGATACGGCGACCACCGAGATCTACACTCTTTCCCTACACGACGCTCTTCCGATCT" 
+     conda:"envs/cutadapt.yaml"
+     shell:
+       "cutadapt  {params.adapter}  -o {output.file1}  {input.read}"
+
+rule mapping:
+     input:
+        p1=rules.trimmed.output.file1
+     output:
+        mapped_sam_file = config["dir_names"]["mapped_dir"]+"/{sample_id}.sam"
+     params:
+        reference = config["params"]["bowtie2"]["bowtie2_reference"]
+     conda:"envs/bowtie2.yaml"
+     shell: 
+        "bowtie2 --local --threads 16 -x {params.reference}  -q {input.p1} -S {output.mapped_sam_file}"     
+
+rule samtools:
+      input:
+        r1 = rules.mapping.output.mapped_sam_file
+      output:
+        r_sorted = config["dir_names"]["samtools_dir"]+"/{sample_id}.bam" 
+      conda: "envs/samtools.yaml"
+      shell:
+        "samtools view -hSb {input.r1} | samtools sort -T {output.r_sorted}.tmp -> {output.r_sorted} "
+
+
+rule samindex:
+     input:
+       read1= rules.samtools.output.r_sorted
+     output:
+       r_indexed = config["dir_names"]["samtools_dir"]+ "/{sample_id}.bam.bai"
+     conda: "envs/samtools.yaml"
+
+     shell:
+       "samtools index  {input.read1}"
+   
+        
+        
+        
+
+
+ 
